@@ -4,6 +4,13 @@
 #include <algorithm>
 #include <stdexcept>
 
+
+/*
+ * TODO : Que faire si .at(hors-limite) ?? throw except ?
+ */
+
+
+
 template < class T >
 class ArrayDeque
 {
@@ -33,7 +40,10 @@ public:
 
     ~ArrayDeque() {
 
-        // destroy object
+        while(!empty()){
+            pop_back();
+        }
+
         ::operator delete(this->buffer);
     }
 
@@ -54,34 +64,64 @@ public:
     }
 
     reference at(size_type logical_i) {
+        size_type a = physical_i(logical_i);
         return *(buffer + physical_i(logical_i));
     }
 
-    value_type back() const {}
+    const_reference back() const {
+        return *(buffer + physical_i(size() - 1));
+    }
 
-    reference back() {}
+    reference back() {
+        return *(buffer + physical_i(size() - 1));
+    }
 
-    value_type front() const {}
+    const_reference front() const {
+        return at(0);
+    }
 
-    reference front() {}
+    reference front() {
+        return at(0);
+    }
 
     void push_back(const_reference value) {
-        if(taille >= this->capacity()){
+        if(taille >= capacity()){
             increaseCapacity();
         }
 
-        this->at(physical_i(taille)) = value;
-
+        at(taille) = value;
 
         ++taille;
     }
 
     void push_front(const_reference value) {
+        if(taille >= capacity()){
+            increaseCapacity();
+        }
+
+        debut = physical_i(capacity() - 1); // capacity - 1 doit tj retourner 10 - 1 = 9 ? non ? (si capacity = 10)
+
+        at(0) = value;
+        ++taille;
     }
 
-    void pop_back() {}
 
-    void pop_front() {}
+    void pop_back() {
+        if(!empty()){
+            (buffer + physical_i(size() - 1))->~T();
+            // TODO : voir si on doit decreaseCapacity() ??
+            --taille;
+        }
+    }
+
+    void pop_front() {
+        if(!empty()) {
+            (buffer + physical_i(0))->~T();
+            debut = physical_i(1);
+            // TODO : voir si on doit decreaseCapacity() ??
+            --taille;
+        }
+    }
 
     // Completer cette classe générique pour qu'elle passe le codecheck
 
@@ -101,18 +141,19 @@ private:
     }
 
     void increaseCapacity(){
-        ArrayDeque tmpArrayDeque(capacite + 1);
+        size_type newCapacity = (capacity() == 0) ? 1 : 2 * capacity();
+        ArrayDeque tmpArrayDeque(newCapacity);
 
         if(!empty()) {
 
             for (size_type i = 0; i < this->size(); ++i) {
-                tmpArrayDeque.push_back(*(buffer + physical_i(i)));
+                tmpArrayDeque.push_back(at(i));
             }
         }
 
         std::swap(this->buffer, tmpArrayDeque.buffer);
 
-        ++capacite;
+        capacite = newCapacity;
     }
 
 

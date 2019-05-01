@@ -26,8 +26,11 @@ template <typename T> void testAPI() {
     cout << " size " << dq.size() << endl;
     cout << " capacity " << dq.capacity() << endl;
     cout << " empty " << boolalpha << dq.empty() << endl;
+
     { T t(0); dq.push_back(t); }   cout << endl;
     dq.push_back(1); cout << endl;
+
+    /*
     cout << " back " << dq.back() << endl;
     { T t(2); dq.back() = t; }   cout << endl;
     dq.back() = 3;   cout << endl;
@@ -40,8 +43,10 @@ template <typename T> void testAPI() {
     dq.at(0) = 7; cout << endl;
     dq.pop_front(); cout << endl;
     dq.pop_back(); cout << endl;
+     */
 }
 
+/*
 template <typename T> void testConstAPI()
 {
     cout << "Test const API(" << name<T>() << ")" << endl;
@@ -57,7 +62,9 @@ template <typename T> void testConstAPI()
     cout << " back " << cdq.back() << endl;
     cout << " at(0) " << cdq.at(0) << endl;
     cout << endl;
+
 }
+
 
 template <typename T>
 void fillDeque(ArrayDeque<T>& dq, size_t n)
@@ -216,12 +223,16 @@ void testExceptionGarantees() {
     displayDeque(dq);
     cout << endl;
 }
-
+*/
 int main() {
-
+/*
     int testNr;
     cin >> testNr;
+    */
 
+    testAPI<int>();
+
+    /*
     switch(testNr) {
         case 0:
             runAllTests<int>();
@@ -243,4 +254,6 @@ int main() {
         default:
             cout << "No such test number\n";
     }
+     */
+
 }

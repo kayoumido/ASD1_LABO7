@@ -64,7 +64,6 @@ public:
     }
 
     reference at(size_type logical_i) {
-        size_type a = physical_i(logical_i);
         return *(buffer + physical_i(logical_i));
     }
 
@@ -108,7 +107,7 @@ public:
 
     void pop_back() {
         if(!empty()){
-            (buffer + physical_i(size() - 1))->~T();
+            (buffer + physical_i(size() - 1))->~value_type();
             // TODO : voir si on doit decreaseCapacity() ??
             --taille;
         }
@@ -116,7 +115,7 @@ public:
 
     void pop_front() {
         if(!empty()) {
-            (buffer + physical_i(0))->~T();
+            (buffer + physical_i(0))->~value_type();
             debut = physical_i(1);
             // TODO : voir si on doit decreaseCapacity() ??
             --taille;

@@ -144,7 +144,7 @@ private:
         ArrayDeque tmpArrayDeque(newCapacity);
 
         if(!empty()) {
-
+            tmpArrayDeque.debut = debut;
             for (size_type i = 0; i < this->size(); ++i) {
                 tmpArrayDeque.push_back(at(i));
             }

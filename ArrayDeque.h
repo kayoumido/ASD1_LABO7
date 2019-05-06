@@ -38,6 +38,16 @@ public:
                                : nullptr;
     }
 
+    ArrayDeque(const ArrayDeque &ad): capacite(ad.capacite), debut(ad.debut), taille(ad.taille) {
+        buffer = capacite != 0 ?
+                 (pointer) ::operator new(capacite * sizeof(value_type))
+                               : nullptr;
+
+        for(size_type i = 0; i < ad.size(); ++i){
+            this->at(i) = ad.at(i);
+        }
+    }
+
     ~ArrayDeque() {
 
         while(!empty()){

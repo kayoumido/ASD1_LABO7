@@ -51,7 +51,7 @@ public:
     ~ArrayDeque() {
 
         while(!empty()){
-            pop_back();
+            pop_front();
         }
 
         ::operator delete(this->buffer);
@@ -98,7 +98,7 @@ public:
             increaseCapacity();
         }
 
-        at(taille) = value;
+        new (buffer + physical_i(taille)) T(value);
 
         ++taille;
     }
@@ -110,7 +110,7 @@ public:
 
         debut = physical_i(capacity() - 1); // capacity - 1 doit tj retourner 10 - 1 = 9 ? non ? (si capacity = 10)
 
-        at(0) = value;
+        new (buffer + physical_i(0)) T(value);
         ++taille;
     }
 

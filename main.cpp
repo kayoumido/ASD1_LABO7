@@ -27,7 +27,7 @@ template <typename T> void testAPI() {
     cout << " capacity " << dq.capacity() << endl;
     cout << " empty " << boolalpha << dq.empty() << endl;
 
-    { T t(0); dq.push_back(t); }   cout << endl;
+    { T t(0); dq.push_back(t); } { T t(0); dq.push_back(t); }   cout << endl;
     dq.push_back(1); cout << endl;
     cout << " back " << dq.back() << endl;
     { T t(2); dq.back() = t; }   cout << endl;

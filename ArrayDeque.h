@@ -98,7 +98,7 @@ public:
             increaseCapacity();
         }
 
-        new (buffer + physical_i(taille)) T(value);
+        new (buffer + physical_i(taille)) value_type(value);
 
         ++taille;
     }
@@ -110,7 +110,7 @@ public:
 
         debut = physical_i(capacity() - 1); // capacity - 1 doit tj retourner 10 - 1 = 9 ? non ? (si capacity = 10)
 
-        new (buffer + physical_i(0)) T(value);
+        new (buffer + physical_i(0)) value_type(value);
         ++taille;
     }
 

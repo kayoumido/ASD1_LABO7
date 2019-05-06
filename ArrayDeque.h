@@ -161,8 +161,7 @@ private:
         }
 
         std::swap(this->buffer, tmpArrayDeque.buffer);
-
-        capacite = newCapacity;
+        std::swap(this->capacite, tmpArrayDeque.capacite);
     }
 
 

@@ -178,7 +178,7 @@ private:
 
         if(!empty()) {
             for (size_type i = 0; i < this->size(); ++i) {
-                tmpArrayDeque.push_back((T&&)at(i));
+                tmpArrayDeque.push_back((rvalue_reference)at(i));
             }
         }
 

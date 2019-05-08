@@ -32,7 +32,7 @@ private:
 
 public:
 
-    ArrayDeque(size_type cap = 0) : debut(0), taille(0), capacite(cap) {
+    ArrayDeque(size_type cap = 0) : debut(0), taille(0), capacite(cap){
         buffer = capacite != 0 ?
                  (pointer) ::operator new(capacite * sizeof(value_type))
                                : nullptr;
@@ -103,6 +103,16 @@ public:
         ++taille;
     }
 
+    void push_back(rvalue_reference rvalue) {
+        if(taille >= capacity()){
+            increaseCapacity();
+        }
+
+        new (buffer + physical_i(taille)) value_type(std::move(rvalue));
+
+        ++taille;
+    }
+
     void push_front(const_reference value) {
         if(taille >= capacity()){
             increaseCapacity();
@@ -115,26 +125,18 @@ public:
         ++taille;
     }
 
-    void push_back(rvalue_reference rvalue) {
-        if(taille >= capacity()){
-            increaseCapacity();
-        }
-
-        new (buffer + physical_i(taille)) value_type(std::move(rvalue));
-
-        ++taille;
-    }
-
     void push_front(rvalue_reference rvalue) {
         if(taille >= capacity()){
             increaseCapacity();
         }
 
-        debut = physical_i(capacity() - 1);
+        debut = physical_i(capacity() - 1); // capacity - 1 doit tj retourner 10 - 1 = 9 ? non ? (si capacity = 10)
 
         new (buffer + physical_i(0)) value_type(std::move(rvalue));
         ++taille;
     }
+
+
 
     void pop_back() {
         if(!empty()){
@@ -165,14 +167,15 @@ private:
         return (physicalIndex >= 0) ? physicalIndex : physicalIndex + capacity();
     }
 
+
     void increaseCapacity(){
         size_type newCapacity = (capacity() == 0) ? 1 : 2 * capacity();
         ArrayDeque tmpArrayDeque(newCapacity);
+        tmpArrayDeque.debut = debut;
 
         if(!empty()) {
-            tmpArrayDeque.debut = debut;
             for (size_type i = 0; i < this->size(); ++i) {
-                tmpArrayDeque.push_back(at(i));
+                tmpArrayDeque.push_back((T&&)at(i));
             }
         }
 

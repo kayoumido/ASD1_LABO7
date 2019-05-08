@@ -5,12 +5,6 @@
 #include <stdexcept>
 
 
-/*
- * TODO : Que faire si .at(hors-limite) ?? throw except ?
- */
-
-
-
 template < class T >
 class ArrayDeque
 {
@@ -38,14 +32,24 @@ public:
                                : nullptr;
     }
 
-    ArrayDeque(const ArrayDeque &ad): capacite(ad.capacite), debut(ad.debut), taille(0) {
-        buffer = capacite != 0 ?
-                 (pointer) ::operator new(capacite * sizeof(value_type))
-                               : nullptr;
+    ArrayDeque(const ArrayDeque &ad): ArrayDeque(ad.capacite) {
+
+        debut = ad.debut;
 
         for(size_type i = 0; i < ad.size(); ++i){
             push_back(ad.at(i));
         }
+
+    }
+
+    ArrayDeque& operator=(const ArrayDeque& rhs){
+        // Prevent for case a1 = a1 => check memory address if same just return the current this object
+        if(&rhs != this) {
+            ArrayDeque tmpAD = rhs;
+            std::swap(buffer, tmpAD.buffer);
+        }
+
+        return *this;
     }
 
     ~ArrayDeque() {
@@ -118,10 +122,9 @@ public:
             increaseCapacity();
         }
 
+        new (buffer + physical_i(capacity() - 1)) value_type(value);
         debut = physical_i(capacity() - 1);
 
-        new (buffer + physical_i(0)) value_type(value);
-        
         ++taille;
     }
 
@@ -130,9 +133,9 @@ public:
             increaseCapacity();
         }
 
-        debut = physical_i(capacity() - 1); // capacity - 1 doit tj retourner 10 - 1 = 9 ? non ? (si capacity = 10)
+        new (buffer + physical_i(capacity() - 1)) value_type(std::move(rvalue));
+        debut = physical_i(capacity() - 1);
 
-        new (buffer + physical_i(0)) value_type(std::move(rvalue));
         ++taille;
     }
 
@@ -182,7 +185,6 @@ private:
         std::swap(this->buffer, tmpArrayDeque.buffer);
         std::swap(this->capacite, tmpArrayDeque.capacite);
     }
-
 
 
 };

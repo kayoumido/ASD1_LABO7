@@ -108,17 +108,37 @@ public:
             increaseCapacity();
         }
 
-        debut = physical_i(capacity() - 1); // capacity - 1 doit tj retourner 10 - 1 = 9 ? non ? (si capacity = 10)
+        debut = physical_i(capacity() - 1);
 
         new (buffer + physical_i(0)) value_type(value);
+        
         ++taille;
     }
 
+    void push_back(rvalue_reference rvalue) {
+        if(taille >= capacity()){
+            increaseCapacity();
+        }
+
+        new (buffer + physical_i(taille)) value_type(std::move(rvalue));
+
+        ++taille;
+    }
+
+    void push_front(rvalue_reference rvalue) {
+        if(taille >= capacity()){
+            increaseCapacity();
+        }
+
+        debut = physical_i(capacity() - 1);
+
+        new (buffer + physical_i(0)) value_type(std::move(rvalue));
+        ++taille;
+    }
 
     void pop_back() {
         if(!empty()){
             (buffer + physical_i(size() - 1))->~value_type();
-            // TODO : voir si on doit decreaseCapacity() ??
             --taille;
         }
     }
@@ -127,13 +147,9 @@ public:
         if(!empty()) {
             (buffer + physical_i(0))->~value_type();
             debut = physical_i(1);
-            // TODO : voir si on doit decreaseCapacity() ??
             --taille;
         }
     }
-
-    // Completer cette classe générique pour qu'elle passe le codecheck
-
 
 private:
 

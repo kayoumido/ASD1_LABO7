@@ -1,3 +1,13 @@
+/**
+-----------------------------------------------------------------------------------
+Laboratoire : 07
+\file       ArrayDeque.h
+\author     Loïc Dessaules, Doran Kayoumi, Gabrielle Thurnherr
+\date       13/05/2019
+\brief      Create a whole ArrayDeque class with dynamic allocation
+Compilateur MinGW-gcc 6.3.0
+**/
+
 #ifndef ArrayDeque_h
 #define ArrayDeque_h
 
@@ -145,14 +155,32 @@ public:
         return *(buffer + physical_i(size() - 1));
     }
 
+    /**
+     * @brief Return the first item of the array deque
+     * @note    this version of the method was created
+     *          for const ArrayDeque and doesn't allow to do :
+     *          ArrayDeque.front() = <something>
+     * @return The first item of the arrayDeque
+     */
     const_reference front() const {
         return at(0);
     }
 
+    /**
+     * @brief Return the first item of the array deque
+     * @note    this version of the method was created
+     *          for non const ArrayDeque and allows to do :
+     *          ArrayDeque.front() = <something>
+     * @return The first item of the arrayDeque
+     */
     reference front() {
         return at(0);
     }
 
+    /**
+     * @brief add a new value at the end of the ArrayDeque
+     * @param value The value to add
+     */
     void push_back(const_reference value) {
         if (taille >= capacity()) {
             increaseCapacity();
@@ -163,48 +191,73 @@ public:
         ++taille;
     }
 
+    /**
+     * @brief add a new value at the end of the ArrayDeque
+     * @param rvalue The value to add as an rvalue_reference to be able to move the item in place of a copy
+     */
     void push_back(rvalue_reference rvalue) {
         if (taille >= capacity()) {
             increaseCapacity();
         }
 
-        new(buffer + physical_i(taille)) value_type(std::move(rvalue));
+        // Construct our new value
+        new (buffer + physical_i(taille)) value_type(std::move(rvalue));
 
         ++taille;
     }
 
+    /**
+     * @brief add a new value at the beginning of the ArrayDeque
+     *
+     * @param value The value to add
+     */
     void push_front(const_reference value) {
         if (taille >= capacity()) {
             increaseCapacity();
         }
 
-        new(buffer + physical_i(capacity() - 1)) value_type(value);
+        // Construct our new value
+        new (buffer + physical_i(capacity() - 1)) value_type(value);
         debut = physical_i(capacity() - 1);
 
         ++taille;
     }
 
+    /**
+     * @brief add a new value at the beginning of the ArrayDeque
+     *
+     * @param rvalue The value to add as an rvalue_reference to be able to move the item in place of a copy
+     */
     void push_front(rvalue_reference rvalue) {
         if (taille >= capacity()) {
             increaseCapacity();
         }
 
-        new(buffer + physical_i(capacity() - 1)) value_type(std::move(rvalue));
+        // Construct our new value
+        new (buffer + physical_i(capacity() - 1)) value_type(std::move(rvalue));
         debut = physical_i(capacity() - 1);
 
         ++taille;
     }
 
 
+    /**
+     * Remove the last item in the ArrayDeque
+     */
     void pop_back() {
-        if (!empty()) {
+        if(!empty()){
+            // Destroy the current value (call his destructor)
             (buffer + physical_i(size() - 1))->~value_type();
             --taille;
         }
     }
 
+    /**
+     * Remove the first item in the ArrayDeque
+     */
     void pop_front() {
-        if (!empty()) {
+        if(!empty()) {
+            // Destroy the current value (call his destructor)
             (buffer + physical_i(0))->~value_type();
             debut = physical_i(1);
             --taille;
@@ -226,7 +279,14 @@ private:
     }
 
 
-    void increaseCapacity() {
+    /**
+     * @brief   Increase the capacity of the current buffer.
+     *          The capacity is increased by doubling the capacity (1 if no capacity) of the current buffer.
+     * @details The data stored in the current buffer is copied into a temp ArrayDeque and swap tmp (buffer and capacity)
+     *          with this (buffer and capacity). We use rvalue_Reference at to do that, to be able to move the value and not copy
+     *          This way => strong warranty respected
+     */
+    void increaseCapacity(){
         size_type newCapacity = (capacity() == 0) ? 1 : 2 * capacity();
         ArrayDeque tmpArrayDeque(newCapacity);
         tmpArrayDeque.debut = debut;
